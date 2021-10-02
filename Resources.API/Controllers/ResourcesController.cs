@@ -20,11 +20,11 @@ namespace Resources.API.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        public async Task<ActionResult<IEnumerable<Resource>>> GetAllResourcesAsync()
+        public ActionResult<IEnumerable<Resource>> GetAllResources()
         {
             try
             {
-                var resources = await _resourcesService.GetAllResourcesAsync();
+                var resources = _resourcesService.GetAllResources();
 
                 return Ok(resources);
             }

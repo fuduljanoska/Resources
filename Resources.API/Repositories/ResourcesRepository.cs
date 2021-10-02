@@ -1,24 +1,29 @@
-﻿using Resources.API.Models;
+﻿using Resources.API.DataAccess;
+using Resources.API.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Resources.API.Repositories
 {
     public class ResourcesRepository : IResourcesRepository
     {
-        public Task<IEnumerable<Resource>> GetAllResourcesAsync()
+        private readonly ResourcesDbContext _resourcesDbContext;
+
+        public ResourcesRepository(ResourcesDbContext resourcesDbContext)
         {
-            return Task.FromResult((IEnumerable<Resource>)new List<Resource>()
-            {
-                new Resource() { Id = 1, Name = "Resource 1", Quantity = 10},
-                new Resource() { Id = 2, Name = "Resource 2", Quantity = 5},
-                new Resource() { Id = 3, Name = "Resource 3", Quantity = 10},
-            });
+            _resourcesDbContext = resourcesDbContext;
         }
 
-        public Task<Resource> GetResourceAsync(int id)
+        public IEnumerable<Resource> GetAllResources()
         {
-            return Task.FromResult(new Resource() { Id = 1, Name = "Resource 1", Quantity = 10 });
+            return _resourcesDbContext.ResourcesDbSet.AsEnumerable();
+        }
+
+        public ValueTask<Resource> GetResourceAsync(int id)
+        {
+            return _resourcesDbContext.ResourcesDbSet.FindAsync(id);
         }
     }
 }

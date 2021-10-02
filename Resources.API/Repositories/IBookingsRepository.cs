@@ -7,7 +7,7 @@ namespace Resources.API.Repositories
 {
     public interface IBookingsRepository
     {
-        Task<IEnumerable<Booking>> GetBookingsByResourceAndDatesAsync(DateTime dateFrom, DateTime dateTo, int resourceId);
-        Task<int> InsertBookingAsync(Booking booking);
+        IEnumerable<Booking> GetBookingsByResourceAndDates(DateTime dateFrom, DateTime dateTo, int resourceId);
+        Task<Booking> InsertBookingAsync(Booking booking);
     }
 }

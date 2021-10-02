@@ -14,9 +14,9 @@ namespace Resources.API.Services
             _resourcesRepository = resourcesRepository;
         }
 
-        public async Task<IEnumerable<Resource>> GetAllResourcesAsync()
+        public IEnumerable<Resource> GetAllResources()
         {
-            return await _resourcesRepository.GetAllResourcesAsync();
+            return _resourcesRepository.GetAllResources();
         }
     }
 }

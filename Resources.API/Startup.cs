@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Resources.API.DataAccess;
 using Resources.API.Repositories;
 using Resources.API.Services;
 using System;
@@ -36,6 +38,7 @@ namespace Resources.API
             services.AddSingleton<IBookingsRepository, BookingsRepository>();
             services.AddSingleton<IEmailSenderService, EmailSenderService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddSingleton(new ResourcesDbContext());
 
             services.AddCors(options =>
             {

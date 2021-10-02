@@ -26,14 +26,9 @@ namespace Resources.API.Controllers
         [Route("bookResource")]
         public async Task<ActionResult<BookingResult>> BookResourceAsync([FromBody][Required]BookingPostDto bookingPostDto)
         {
-            if(!ModelState.IsValid)
+            if (!ValidateModel(bookingPostDto, out var actionResult))
             {
-                return BadRequest(ModelState);
-            }
-
-            if (bookingPostDto.DateTo <= bookingPostDto.DateFrom)
-            {
-                return BadRequest(new { ErrorMessage = "DateTo cannot be smaller or equal to DateFrom" });
+                return actionResult;
             }
 
             var booking = _mapper.Map<BookingPostDto, Booking>(bookingPostDto);
@@ -48,8 +43,54 @@ namespace Resources.API.Controllers
                 return Problem(ex.Message,
                     null,
                     (int)HttpStatusCode.InternalServerError,
-                    "Exception was thrown during resources fetch.");
+                    "Exception was thrown bookings read.");
             }
+        }
+
+        [HttpPost]
+        [Route("checkBookingConflicts")]
+        public async Task<ActionResult> CheckBookingConflictsAsync([FromBody][Required] BookingPostDto bookingPostDto)
+        {
+            if(!ValidateModel(bookingPostDto, out var actionResult))
+            {
+                return actionResult;
+            }
+
+            var booking = _mapper.Map<BookingPostDto, Booking>(bookingPostDto);
+            try
+            {
+                var result = await _bookingsService.CheckBookingConflictsAsync(booking);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message,
+                    null,
+                    (int)HttpStatusCode.InternalServerError,
+                    "Exception was thrown during bookings read.");
+            }
+        }
+
+        private bool ValidateModel(BookingPostDto bookingPostDto, out ActionResult actionResult)
+        {
+            if (!ModelState.IsValid)
+            {
+                actionResult = BadRequest(ModelState);
+
+                return false;
+            }
+
+            if (bookingPostDto.DateTo <= bookingPostDto.DateFrom)
+            {
+                actionResult = BadRequest(new { ErrorMessage = "DateTo cannot be smaller or equal to DateFrom" });
+
+                return false;
+            }
+
+            actionResult = null;
+
+            return true;
         }
     }
 }

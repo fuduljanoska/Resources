@@ -32,7 +32,7 @@ namespace Resources.API.Services
             BookingResult bookingResult;
             try
             {
-                bookingResult = await CheckBookingConflictsAsync(booking, resource);
+                bookingResult = CheckBookingConflicts(booking, resource);
                 if (bookingResult.IsSuccess)
                 {
                     await _bookingRepository.InsertBookingAsync(booking);
@@ -61,10 +61,17 @@ namespace Resources.API.Services
             return bookingResult;
         }
 
-        public async Task<BookingResult> CheckBookingConflictsAsync(Booking booking, Resource resource)
+        public async Task<BookingResult> CheckBookingConflictsAsync(Booking booking)
+        {
+            var resource = await _resourcesRepository.GetResourceAsync(booking.ResourceId);
+
+            return CheckBookingConflicts(booking, resource);
+        }
+
+        private BookingResult CheckBookingConflicts(Booking booking, Resource resource)
         {
             var existingResourceBookings = 
-                await _bookingRepository.GetBookingsByResourceAndDatesAsync(booking.DateFrom, booking.DateTo, booking.ResourceId);
+                _bookingRepository.GetBookingsByResourceAndDates(booking.DateFrom, booking.DateTo, booking.ResourceId);
             var totalBookedQuantity = existingResourceBookings.Sum(x => x.BookedQuantity);
             if(booking.BookedQuantity + totalBookedQuantity > resource.Quantity)
             {
