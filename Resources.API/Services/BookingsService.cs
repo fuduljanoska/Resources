@@ -78,7 +78,7 @@ namespace Resources.API.Services
             var totalBookedQuantity = existingResourceBookings.Sum(x => x.BookedQuantity);
             if(booking.BookedQuantity + totalBookedQuantity > resource.Quantity)
             {
-                if (resource.Quantity == totalBookedQuantity)
+                if (resource.Quantity <= totalBookedQuantity)
                 {
                     return new BookingResult() { IsSuccess = false, Message = $"Resource {resource.Name} is unavailable!" };
                 }
