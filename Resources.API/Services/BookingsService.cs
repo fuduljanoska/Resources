@@ -28,6 +28,9 @@ namespace Resources.API.Services
         public async Task<BookingResult> BookResourceAsync(Booking booking)
         {
             var resource = await _resourcesRepository.GetResourceAsync(booking.ResourceId);
+
+            // Considering this is a single deployable API we are using a sempahore to synchronize any parallel threads.
+            // Otherwise this should be done using table lock in database.
             await _bookingsSemaphore.WaitAsync();
             BookingResult bookingResult;
             try

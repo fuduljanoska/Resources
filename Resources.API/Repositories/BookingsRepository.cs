@@ -2,6 +2,7 @@
 using Resources.API.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,12 +23,15 @@ namespace Resources.API.Repositories
                     .Where(x => x.ResourceId == resourceId && dateFrom <= x.DateTo && dateTo >= x.DateFrom);
         }
 
-        public async Task<Booking> InsertBookingAsync(Booking booking)
+        public async Task InsertBookingAsync(Booking booking)
         {
             var entityEntry = await _resoucesDbContext.BookingDbSet.AddAsync(booking);
             int numWrittenEntries = await _resoucesDbContext.SaveChangesAsync();
 
-            return entityEntry.Entity;
+            if(numWrittenEntries != 1)
+            {
+                throw new Exception("Booking insert failed!");
+            }
         }
     }
 }

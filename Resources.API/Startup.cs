@@ -59,6 +59,7 @@ namespace Resources.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.SeedData();
             }
 
             app.UseHttpsRedirection();
